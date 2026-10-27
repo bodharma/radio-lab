@@ -1,10 +1,42 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { scenarios } from '../../src/scenarios.js';
+import { createHash } from 'node:crypto';
 
 const course = JSON.parse(await readFile(new URL('../../public/course.json', import.meta.url), 'utf8'));
 const authored = course.provenance === 'authored-public';
 const topicUrl = id => `/#${encodeURIComponent(id)}`;
+
+test('author credit and bundled dependency notices remain accessible across routes and focus mode', async ({ page }) => {
+  await page.goto('/#today');
+  const credits = page.getByRole('contentinfo', { name: 'Project credits' });
+  await expect(credits.getByRole('link', { name: 'bodharma', exact: true })).toHaveAttribute('href', 'https://github.com/bodharma');
+  await expect(credits.getByRole('link', { name: 'Original source', exact: true })).toHaveAttribute('href', 'https://github.com/bodharma/radio-lab');
+  const license = credits.getByRole('link', { name: 'PolyForm Noncommercial 1.0.0', exact: true });
+  const licenseHref = await license.getAttribute('href');
+  expect(new URL(licenseHref, page.url()).origin).toBe(new URL(page.url()).origin);
+  const licenceResponse = await page.request.get(licenseHref);
+  expect(licenceResponse.status()).toBe(200);
+  expect(createHash('sha256').update(await licenceResponse.body()).digest('hex')).toBe('ffcca38841adb694b6f380647e15f17c446a4d1656fed51a1e2041d064c94cc8');
+  await credits.locator('summary').click();
+  await expect(credits.locator('#project-notice')).toContainText('Required Notice: Original author: bodharma');
+  const notices = credits.getByRole('link', { name: 'Third-party notices', exact: true });
+  const href = await notices.getAttribute('href');
+  expect(new URL(href, page.url()).origin).toBe(new URL(page.url()).origin);
+  const response = await page.request.get(href);
+  expect(response.status()).toBe(200);
+  const text = await response.text();
+  expect(text).toContain('DOMPurify 3.4.17');
+  expect(text).toContain('Marked 18.1.1');
+  expect(text).toContain('Regenerator runtime');
+  await page.goto(topicUrl('Topics/Batteries'));
+  await page.getByRole('button', { name: 'Focus mode: off', exact: true }).click();
+  await expect(credits).toBeVisible();
+  await page.goto('/#assessment');
+  await expect(credits).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
 
 test('starts in original course order and reports complete source coverage', async ({ page }) => {
   await page.goto('/');

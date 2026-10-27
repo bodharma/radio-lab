@@ -2,6 +2,9 @@
 !package.json
 !package-lock.json
 !index.html
+!LICENSE.txt
+!NOTICE.txt
+!THIRD_PARTY_NOTICES.txt
 !src/
 !src/**
 !docker/

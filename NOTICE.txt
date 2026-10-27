@@ -1,0 +1,17 @@
+Radio Lab
+Required Notice: Copyright (c) 2026 bodharma and contributors.
+
+Required Notice: Original author: bodharma (https://github.com/bodharma).
+Author profile: https://github.com/bodharma
+Required Notice: Original project and source: https://github.com/bodharma/radio-lab
+
+This notice identifies Radio Lab's original author and source repository.
+Project licence: PolyForm Noncommercial License 1.0.0 (LICENSE.txt)
+https://polyformproject.org/licenses/noncommercial/1.0.0
+The unmodified licence specifies the permissions and conditions for Radio
+Lab's project-owned code, documentation and authored teaching material.
+
+Third-party software, external reference documents, personal imports and
+learner records are separate from Radio Lab's project-owned code and authored
+teaching material. Their existing rights and notices remain unchanged.
+See THIRD_PARTY_NOTICES.txt for bundled browser components.

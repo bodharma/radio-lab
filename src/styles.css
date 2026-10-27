@@ -414,6 +414,9 @@ textarea { width: 100%; display: block; resize: vertical; padding: 12px 14px; bo
 .review-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 10px; }
 .review-row small { color: var(--muted); max-width: 50ch; font-size: .73rem; }
 .review-row button { white-space: nowrap; font-size: .8rem; }
+.project-attribution { padding: 18px; color: var(--muted); font-size: .75rem; text-align: center; line-height: 1.8; }
+.project-attribution details { max-width: 80ch; margin: 8px auto; text-align: left; }
+.project-attribution pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
 .topic-footer { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 22px 0 10px; font-size: .75rem; color: var(--muted); }
 .topic-footer small { display: block; margin-top: 3px; font-size: .68rem; }
 .topic-actions { display: flex; flex: 0 0 auto; gap: 8px; }
