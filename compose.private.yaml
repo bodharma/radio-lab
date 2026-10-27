@@ -1,0 +1,9 @@
+services:
+  radio-lab:
+    volumes:
+      - type: bind
+        source: ./public
+        target: /course
+        read_only: true
+        bind:
+          create_host_path: false

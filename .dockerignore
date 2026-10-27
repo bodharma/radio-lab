@@ -1,0 +1,11 @@
+**
+!package.json
+!package-lock.json
+!index.html
+!src/
+!src/**
+!docker/
+!docker/nginx.conf
+!scripts/
+!scripts/create-public-course.mjs
+!scripts/import-course.mjs

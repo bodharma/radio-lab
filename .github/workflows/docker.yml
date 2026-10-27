@@ -1,0 +1,91 @@
+name: Test and publish Docker image
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install dependencies and public study material
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils
+          npm ci
+          npm run course:public
+          npm run import:reference
+      - name: Test and build
+        run: |
+          npm test
+          npm run build
+          npx playwright install --with-deps chrome
+          npm run test:e2e
+      - name: Check standalone image without private mounts
+        run: |
+          docker build -t radio-lab:check .
+          docker run -d --name radio-lab-check --read-only --tmpfs /tmp --cap-drop ALL --security-opt no-new-privileges:true -p 127.0.0.1:5181:8080 radio-lab:check
+          trap 'docker logs radio-lab-check; docker rm -f radio-lab-check' EXIT
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:5181/course.json -o /tmp/course.json; then break; fi
+            echo "Waiting for web server ($attempt/30)"
+            sleep 1
+          done
+          node --input-type=module -e "import fs from 'node:fs'; import assert from 'node:assert/strict'; const c=JSON.parse(fs.readFileSync('/tmp/course.json')); assert.equal(c.provenance,'authored-public'); assert.equal(c.coverage.courseTopics,86);"
+          curl -fsS http://127.0.0.1:5181/healthz
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:5181/reference/ex307-jan-2026.pdf)" = 302
+
+  publish:
+    needs: verify
+    if: github.event_name != 'pull_request' && github.repository == 'bodharma/radio-lab'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+      - uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6
+        id: meta
+        with:
+          images: ghcr.io/bodharma/radio-lab
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha
+            type=semver,pattern={{version}}
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

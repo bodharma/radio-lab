@@ -1,0 +1,14 @@
+node_modules/
+dist/
+public/course.json
+public/course.json.tmp
+public/reference/
+test-results/
+playwright-report/
+.DS_Store
+.serena/
+data/coverage.json
+.env
+.env.*
+!.env.example
+*.log

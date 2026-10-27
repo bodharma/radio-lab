@@ -1,0 +1,24 @@
+{
+  "name": "radio-lab",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5180 --strictPort",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 5180 --strictPort",
+    "import:course": "node scripts/import-course.mjs",
+    "course:public": "node scripts/create-public-course.mjs",
+    "import:reference": "node scripts/import-reference.mjs",
+    "test": "node --test test/*.test.js",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "dompurify": "3.4.17",
+    "marked": "18.1.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "vite": "8.3.5"
+  }
+}

@@ -1,0 +1,14 @@
+services:
+  radio-lab:
+    build: .
+    image: ghcr.io/bodharma/radio-lab:latest
+    ports:
+      - "127.0.0.1:${RADIO_LAB_PORT:-5180}:8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
