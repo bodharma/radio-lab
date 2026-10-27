@@ -26,4 +26,7 @@ test('bundled dependency notices retain the installed upstream licence texts and
     for (const file of files) assert.ok(notices.includes((await read(`node_modules/${name}/${file}`)).trim()), `${name}/${file}: full notice must be retained`);
   }
   assert.ok(notices.includes('Regenerator runtime embedded by DOMPurify'));
+  const viteCore = (await read('node_modules/vite/LICENSE.md')).split('# Licenses of bundled dependencies')[0].trim();
+  assert.ok(notices.includes(viteCore), 'Vite browser runtime helpers retain the upstream MIT notice');
+  assert.ok(notices.includes('Copyright (C) 2018-2021 Guy Bedford'), 'module-preload polyfill retains its upstream author notice');
 });
