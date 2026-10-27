@@ -10,8 +10,14 @@ import { createLearningUI } from './learning-ui.js';
 import { createStudyToolsUI } from './study-tools-ui.js';
 import { createReferenceReader } from './reference-reader.js';
 import './styles.css';
+import thirdPartyNoticesUrl from '../THIRD_PARTY_NOTICES.txt?url';
+import licenseUrl from '../LICENSE.txt?url';
+import projectNotice from '../NOTICE.txt?raw';
 
 const app = document.querySelector('#app');
+document.querySelector('#dependency-notices').href = thirdPartyNoticesUrl;
+document.querySelector('#project-license').href = licenseUrl;
+document.querySelector('#project-notice').textContent = projectNotice;
 const number = value => new Intl.NumberFormat('en-GB', { maximumFractionDigits: 4 }).format(value);
 let course, byId, byStem, ordered, moduleByTopic, progress, state, active, activity, record, assessment, learning, studyTools, referenceReader;
 let referenceMode = false;

@@ -52,6 +52,10 @@ jobs:
           node --input-type=module -e "import fs from 'node:fs'; import assert from 'node:assert/strict'; const c=JSON.parse(fs.readFileSync('/tmp/course.json')); assert.equal(c.provenance,'authored-public'); assert.equal(c.coverage.courseTopics,86);"
           curl -fsS http://127.0.0.1:5181/healthz
           test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:5181/reference/ex307-jan-2026.pdf)" = 302
+          for notice in LICENSE.txt NOTICE.txt THIRD_PARTY_NOTICES.txt; do
+            docker exec radio-lab-check cat "/usr/share/doc/radio-lab/$notice" | cmp -s "$notice" -
+          done
+          test "$(docker image inspect radio-lab:check --format '{{index .Config.Labels "org.opencontainers.image.licenses"}}')" = PolyForm-Noncommercial-1.0.0
 
   publish:
     needs: verify
@@ -76,6 +80,8 @@ jobs:
         id: meta
         with:
           images: ghcr.io/bodharma/radio-lab
+          labels: |
+            org.opencontainers.image.licenses=PolyForm-Noncommercial-1.0.0
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=sha

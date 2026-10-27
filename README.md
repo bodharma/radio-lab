@@ -6,6 +6,14 @@ A visual UK Foundation amateur-radio study workbench: 86 ordered topics, detaile
 
 The public edition contains original Radio Lab teaching and an authored glossary. Personal Obsidian notes, learner records and downloaded third-party reference files are excluded from the repository and image.
 
+## Licence and credit
+
+Radio Lab's project-owned code, documentation and authored lessons use the unchanged [PolyForm Noncommercial License 1.0.0](LICENSE.txt), identified as `PolyForm-Noncommercial-1.0.0`. Original author: [bodharma](https://github.com/bodharma); original project: [bodharma/radio-lab](https://github.com/bodharma/radio-lab).
+
+The licence grants use, modification and sharing for its permitted noncommercial purposes, including the personal uses and organizations it expressly lists. Keep its terms or canonical URL and the `Required Notice:` lines in [NOTICE.txt](NOTICE.txt) when passing on copies. It does not require forks or hosted modifications to publish their source. Commercial uses outside the licence's permitted purposes need separate permission from the rights holder. This is a source-available project; the licence text governs.
+
+The app footer provides author credit, the local licence text and third-party notices, including during offline study. The Docker image retains the same files under `/usr/share/doc/radio-lab/` and declares its licence in OCI metadata. Dependencies keep their own terms in [THIRD_PARTY_NOTICES.txt](THIRD_PARTY_NOTICES.txt). External reference documents, personal imports and learner records are not relicensed by this project.
+
 ## Run the published Docker image
 
 Supports Linux AMD64 and ARM64, including Apple Silicon through Docker Desktop/OrbStack:
